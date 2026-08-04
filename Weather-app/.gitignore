@@ -1,0 +1,15 @@
+# Ignore sensitive API keys 
+.env
+
+# Ignore virtual enviroments
+venv/
+env/
+ENV/
+
+# Ignore Python compiled bytecode
+__pycache__/
+*.py[cod]
+
+# Ignore IDE settings
+.vscode/
+.idea/
