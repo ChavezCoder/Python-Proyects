@@ -1,12 +1,14 @@
 import os
+from pathlib import Path
 import requests
 from dotenv import load_dotenv
 
-# Load enviroments variables from .env file
-load_dotenv()
+# Force the exact path of the .env file to the script's directory.
+env_path = Path(__file__).resolve().parent / '.env'
+load_dotenv(dotenv_path=env_path)
 
 API_KEY = os.getenv("API_KEY")
-BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
+BASE_URL = os.getenv("BASE_URL")
 
 def get_weather(city_name: str) -> dict:
     """
@@ -38,9 +40,11 @@ def get_weather(city_name: str) -> dict:
             return {
                 "city": data["name"],
                 "country": data["sys"]["country"],
-                "temp": round(data["main"]["feels_like"]),
-                "feels_like": data["main"]["humidity"],
-                "description": data["weatgher"][0]["description"].capitalize(),
+                "temp": round(data["main"]["temp"]),
+                "feels_like": round(data["main"]["feels_like"]),
+                "humidity": data["main"]["humidity"],
+                "wind_speed": data["wind"]["speed"],
+                "description": data["weather"][0]["description"].capitalize(),
                 "icon": data["weather"][0]["icon"]
             }
         elif response.status_code == 404:
@@ -63,9 +67,10 @@ if __name__ == "__main__":
     if "error" in weather:
         print(f"❌ Error: {weather['error']}")
     else:
-        print(f"📍 Location: {weather["city"]}, {weather['country']}.")
-        print(f"🌡️ Temperature: {weather["temp"]}°C (Feels lie {weather['feels_like']}°C.)")
+        print(f"📍 Location: {weather['city']}, {weather['country']}.")
+        print(f"🌡️ Temperature: {weather['temp']}°C (Feels like {weather['feels_like']}°C.)")
         print(f"☁️ Condition: {weather['description']}.")
         print(f"💧 Humidity: {weather['humidity']}%.")
-        print(f"💨 Wind Speed: {weather['wind_speed']}%.")
+        print(f"💨 Wind Speed: {weather['wind_speed']} m/s.")
+
 
